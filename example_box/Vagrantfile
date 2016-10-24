@@ -1,0 +1,22 @@
+Vagrant.configure('2') do |config|
+	config.vm.provider :proxmox do |proxmox|
+		proxmox.endpoint = 'https://pve1.example.net:8006/api2/json'
+		proxmox.user_name = 'vagrant@pve'
+		proxmox.password = 'vagrant'
+		proxmox.vm_type = :lxc
+		proxmox.openvz_os_template = 'local:vztmpl/debian-8.0-standard_8.0-1_amd64.tar.gz'
+		proxmox.vm_id_range = 900..910
+		proxmox.vm_name_prefix = 'vagrant_test_'
+		proxmox.vm_memory = 256
+                proxmox.vm_storage = "vagrant"
+		proxmox.vm_disk_size = 21
+		proxmox.selected_node = 'pve1'
+		proxmox.disable_adjust_forwarded_port = true
+	end
+
+	config.vm.define :machine, primary: true do |machine|
+		machine.vm.box = 'dummy'
+		machine.vm.network :public_network, ip: '192.168.124.124', interface: 'eth0', gw: '192.168.124.1', bridge: 'vmbr0'
+#		machine.vm.network :public_network, ip: 'dhcp', interface: 'eth0', bridge: 'vmbr0'
+	end
+end
