@@ -140,6 +140,20 @@ Finally run `vagrant up --provider=proxmox` to create and start the new OpenVZ c
 * `qemu_nic_model` which model of network interface card to use, default 'e1000'
 * `qemu_bridge` connect automatically to this bridge, default 'vmbr0'
 * `selected_node` If specified, only this specific node is used to create machines 
+* `disable_adjust_forwarded_port` If true, no ssh manipulations will be done.
+
+## Debug RestClient Communication with Proxmox-Node
+
+`vagrant-proxmox` uses Rest-Client gem to communicate with proxmox.
+
+```
+$ RESTCLIENT_LOG=stdout vagrant up --provider proxmox
+```
+
+### Tips
+
+* ensure your LXC-template is accessable from every proxmox node
+* debug with `selected_node`-option enabled
 
 ## Build the plugin
 
