@@ -163,6 +163,11 @@ module VagrantPlugins
 			# @return [String]
 			attr_accessor :qemu_cache
 
+			# disable ssh port adjustments
+			#
+			# @return [Boolean]
+			attr_accessor :disable_adjust_forwarded_port
+
 			def initialize
 				@endpoint = UNSET_VALUE
 				@selected_node = UNSET_VALUE
@@ -195,6 +200,7 @@ module VagrantPlugins
 				@qemu_bridge = 'vmbr0'
 				@qemu_disk_format = 'qcow2'
 				@qemu_cache = 'none'
+				@disable_adjust_forwarded_port = false
 			end
 
 			# This is the hook that is called to finalize the object before it is put into use.

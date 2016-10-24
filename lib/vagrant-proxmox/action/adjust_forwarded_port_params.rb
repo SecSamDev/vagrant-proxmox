@@ -18,19 +18,21 @@ module VagrantPlugins
 					vm_id = nil
 
 					begin
-						vm_id = env[:machine].id.split("/").last
-						node_ip = env[:proxmox_connection].get_node_ip(node, 'vmbr0')
-						env[:machine].config.vm.networks.each do |type, options|
-							next if type != :forwarded_port
-							if options[:id] == "ssh"
-								# Provisioning and vagrant ssh will use this
-								# high port of the selected proxmox node
-								options[:auto_correct] = false
-								options[:host_ip] = node_ip
-								options[:host] = sprintf("22%03d", vm_id.to_i).to_i
-								env[:machine].config.ssh.host = node_ip
-								env[:machine].config.ssh.port = sprintf("22%03d", vm_id.to_i).to_s
-								break
+						if env[:machine].provider_config.disable_adjust_forwarded_port == false
+							vm_id = env[:machine].id.split("/").last
+							node_ip = env[:proxmox_connection].get_node_ip(node, 'vmbr0')
+							env[:machine].config.vm.networks.each do |type, options|
+								next if type != :forwarded_port
+								if options[:id] == "ssh"
+									# Provisioning and vagrant ssh will use this
+									# high port of the selected proxmox node
+									options[:auto_correct] = false
+									options[:host_ip] = node_ip
+									options[:host] = sprintf("22%03d", vm_id.to_i).to_i
+									env[:machine].config.ssh.host = node_ip
+									env[:machine].config.ssh.port = sprintf("22%03d", vm_id.to_i).to_s
+									break
+								end
 							end
 						end
 					end
