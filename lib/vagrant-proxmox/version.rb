@@ -1,7 +1,5 @@
 module VagrantPlugins
-	module Proxmox
-
-		VERSION = '0.0.10.alpha'
-
-	end
+  module Proxmox
+    VERSION = '0.0.10.alpha2'.freeze
+  end
 end

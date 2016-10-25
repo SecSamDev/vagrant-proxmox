@@ -28,3 +28,8 @@
 .idea/gradle.xml
 .idea/dataSources.*
 atlassian-ide-plugin.xml
+
+# vagrant
+example_box/.vagrant
+example_box/Vagrantfile
+
