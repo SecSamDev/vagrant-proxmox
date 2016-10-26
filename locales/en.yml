@@ -5,6 +5,11 @@ en:
     creating_vm: 'Creating the virtual machine...'
     destroying_vm: 'Destroying the virtual machine...'
     done: "Done!"
+    adjust_forwarded_port_params: 'Trying to adjust forwarded_port params'
+    network_setup_info: 'Network %{net_id}: %{net_config}'
+    network_setup_ignored: |-
+      Network config will be ignored, because it isn't supported by proxmox.
+        Config: %{net_config}
     errors:
       create_vm_timeout: |-
         Creating the vm on the proxmox server timed out.
@@ -74,6 +79,14 @@ en:
       no_qemu_os_specified_for_vm_type_qemu: "No qemu_os specified for vm_type=:qemu"
       no_qemu_disk_size_specified_for_vm_type_qemu: "No qemu_disk_size specified for vm_type=:qemu"
       invalid_node_error: 'Invalid node specified: %{node}'
+      vm_configure_error: |-
+        Invalid box configuration
+
+        Invalid-Config: %{error_msg}
+      internal_plugin_error: |-
+        You've found a bug! Please create a new issue at https://github.com/lehn-etracker/vagrant-proxmox/issues
+
+        Error-Msg: %{error_msg}
     not_created: 'The virtual machine is not created on the server!'
     rsync_folder: |-
           Rsyncing folder: %{hostpath} => %{guestpath}

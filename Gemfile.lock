@@ -14,7 +14,7 @@ GIT
 PATH
   remote: .
   specs:
-    vagrant-proxmox (0.0.10.alpha)
+    vagrant-proxmox (0.0.10.alpha4)
       activesupport (~> 4.0.0)
       rest-client (~> 1.6.7)
       retryable (~> 1.3.3)
@@ -156,4 +156,4 @@ DEPENDENCIES
   webmock (~> 1.18.0)
 
 BUNDLED WITH
-   1.13.2
+   1.13.6

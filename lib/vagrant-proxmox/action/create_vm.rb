@@ -24,7 +24,7 @@ module VagrantPlugins
             exit_status = connection(env).create_vm node: node, vm_type: config.vm_type, params: params
             exit_status == 'OK' ? exit_status : raise(VagrantPlugins::Proxmox::Errors::ProxmoxTaskFailed, proxmox_exit_status: exit_status)
           rescue StandardError => e
-            raise VagrantPlugins::Proxmox::Errors::VMCreateError, proxmox_exit_status: e.message
+            raise VagrantPlugins::Proxmox::Errors::VMCreateError, proxmox_exit_status: "#{e.message} with params #{params}"
           end
 
           env[:machine].id = "#{node}/#{vm_id}"
@@ -75,21 +75,22 @@ module VagrantPlugins
             memory: config.vm_memory,
             description: "#{config.vm_name_prefix}#{env[:machine].name}",
             cmode: config.lxc_cmode.to_s,
-            console: config.lxc_console.to_s,
             cpulimit: config.lxc_cpulimit,
             cpuunits: config.lxc_cpuunits,
-            onboot: config.lxc_onboot,
-            protection: config.lxc_protection,
             swap: config.lxc_swap,
             tty: config.lxc_tty
           }.tap do |params|
-            params[:net0] = "name=#{get_machine_interface_name(env)},\
-                              ip=#{get_machine_ip_address(env)}/24,\
-                              gw=#{get_machine_gw_ip(env)},\
-                              bridge=#{get_machine_bridge_name(env)}"\
-                              if get_machine_ip_address(env)
+#            params[:net0] = "name=#{get_machine_interface_name(env)},"\
+#                              "ip=#{get_machine_ip_address(env)}/24,"\
+#                              "gw=#{get_machine_gw_ip(env)},"\
+#                              "bridge=#{get_machine_bridge_name(env)}"\
+#                              if get_machine_ip_address(env)
             params[:nameserver] = config.lxc_nameserver.to_s\
                                     if config.lxc_nameserver
+            params[:onboot] = get_rest_boolean(config.lxc_onboot)
+            params[:protection] = get_rest_boolean(config.lxc_protection)
+            params[:console] = get_rest_boolean(config.lxc_console)
+            add_lxc_network_config(env, params)
           end
         end
       end

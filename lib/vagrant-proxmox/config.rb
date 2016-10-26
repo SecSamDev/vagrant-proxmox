@@ -251,6 +251,12 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :lxc_cmode
 
+      # LXC tty
+      # Specify the number of tty available to the container.
+      #
+      # @return [Integer]
+      attr_accessor :lxc_tty
+
       def initialize
         @endpoint = UNSET_VALUE
         @selected_node = UNSET_VALUE
@@ -294,6 +300,7 @@ module VagrantPlugins
         @lxc_nameserver = UNSET_VALUE
         @lxc_console = true
         @lxc_cmode = 'tty'
+        @lxc_tty = UNSET_VALUE
       end
 
       # This is the hook that is called to finalize the object before it is put into use.
@@ -316,6 +323,7 @@ module VagrantPlugins
         @vm_disk_size = convert_disk_size_to_gigabyte @vm_disk_size if @vm_disk_size
         @lxc_ostype = nil if @lxc_ostype == UNSET_VALUE
         @lxc_nameserver = nil if @lxc_nameserver == UNSET_VALUE
+        @lxc_tty = 2 if @lxc_tty == UNSET_VALUE
       end
 
       def validate(_machine)
@@ -338,6 +346,8 @@ module VagrantPlugins
         if @vm_type == :lxc
           errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_cmode') unless \
             %w(tty shell console).include?(@lxc_cmode)
+          errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_tty') unless \
+            @lxc_tty.is_a?(Integer)
         end
         { 'Proxmox Provider' => errors }
       end
