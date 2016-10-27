@@ -125,7 +125,7 @@ module VagrantPlugins
             # static interface type, similar in all cases
             cfg.push('type=veth')
             # give user feedback about network used setup
-            env[:ui].info I18n.t('vagrant_proxmox.network_setup_info',
+            env[:ui].detail I18n.t('vagrant_proxmox.network_setup_info',
                                  net_id: c[:net_id].to_s,
                                  net_config: cfg.join(','))
             params[c[:net_id].to_s] = cfg.join(',')
@@ -188,6 +188,47 @@ module VagrantPlugins
             # return nil if detection failed
             return nil if netif_id == c[:net_id]
             "eth#{netif_id}"
+          end
+        end
+
+        # Add LXC mount points to params
+        # Reads params and combines all defined lxc_mount_points to params.
+        #
+        # Format with right order:
+        # mp[n]: [volume=]<volume>,mp=<Path>[,acl=<1|0>][,backup=<1|0>]
+        #        [,quota=<1|0>][,ro=<1|0>][,size=<DiskSize>]
+        #
+        def add_lxc_mount_points(env, config, params)
+          config.lxc_mount_points.each do |mp, cfg|
+            # merge with defaults
+            c = config.lxc_mount_point_defaults.merge(cfg)
+            # validate config
+            unless mp =~ /^mp\d$/
+              raise Errors::VMConfigError,
+                    error_msg: "Invalid mount point #{mp} in config."
+            end
+            # check required options
+            %i(volume mp backup size).each do |k|
+              unless c.include?(k)
+                raise Errors::VMConfigError,
+                      error_msg: "MountPoint #{mp} must have a '#{k}' item"
+              end
+            end
+            # combine volume:size into volume
+            c[:volume] = "#{c[:volume]}:#{c[:size]}"
+            # translate booleans
+            %i(acl backup quota ro).each do |k|
+              c[k] = get_rest_boolean(c[k])
+            end
+            # build config string
+            cs = []
+            %i(volume mp acl backup quota ro).each do |k|
+              cs.push("#{k}=#{c[k]}")
+            end
+            # put mount point back into params
+            e = mp.to_sym
+            params[e] = cs.join(',')
+            env[:ui].detail("MountPoint #{mp}: #{params[e]}")
           end
         end
       end

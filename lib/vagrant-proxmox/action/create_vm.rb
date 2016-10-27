@@ -80,17 +80,13 @@ module VagrantPlugins
             swap: config.lxc_swap,
             tty: config.lxc_tty
           }.tap do |params|
-#            params[:net0] = "name=#{get_machine_interface_name(env)},"\
-#                              "ip=#{get_machine_ip_address(env)}/24,"\
-#                              "gw=#{get_machine_gw_ip(env)},"\
-#                              "bridge=#{get_machine_bridge_name(env)}"\
-#                              if get_machine_ip_address(env)
             params[:nameserver] = config.lxc_nameserver.to_s\
                                     if config.lxc_nameserver
             params[:onboot] = get_rest_boolean(config.lxc_onboot)
             params[:protection] = get_rest_boolean(config.lxc_protection)
             params[:console] = get_rest_boolean(config.lxc_console)
             add_lxc_network_config(env, params)
+            add_lxc_mount_points(env, config, params)
           end
         end
       end

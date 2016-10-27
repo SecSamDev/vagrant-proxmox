@@ -1,6 +1,6 @@
 module VagrantPlugins
   module Proxmox
-    # rubocop:disable Metrics/ClassLength
+    # Define proxmox specific vagrant settings
     class Config < Vagrant.plugin('2', :config)
       # The Proxmox REST API endpoint
       #
@@ -257,6 +257,15 @@ module VagrantPlugins
       # @return [Integer]
       attr_accessor :lxc_tty
 
+      # LXC mount point defaults
+      # Values are used to set defaults for unset options.
+      #
+      # Format with right order:
+      # mp[n]: [volume=]<volume>,mp=<Path>[,acl=<1|0>][,backup=<1|0>]
+      #        [,quota=<1|0>][,ro=<1|0>][,size=<DiskSize>]
+      # @return [Hash]
+      attr_accessor :lxc_mount_point_defaults
+
       def initialize
         @endpoint = UNSET_VALUE
         @selected_node = UNSET_VALUE
@@ -301,6 +310,11 @@ module VagrantPlugins
         @lxc_console = true
         @lxc_cmode = 'tty'
         @lxc_tty = UNSET_VALUE
+        @lxc_mount_point_defaults = { acl: false,
+                                      backup: false,
+                                      quota: false,
+                                      ro: false,
+                                      size: 8 }
       end
 
       # This is the hook that is called to finalize the object before it is put into use.
