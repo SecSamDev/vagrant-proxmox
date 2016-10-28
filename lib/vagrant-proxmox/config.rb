@@ -266,6 +266,24 @@ module VagrantPlugins
       # @return [Hash]
       attr_accessor :lxc_mount_point_defaults
 
+      # Use network defaults
+      # If true, network definitions from :lxc_network_defaults will be merged.
+      #
+      # @return [Boolean]
+      attr_accessor :use_network_defaults
+
+      # Dry run
+      # Allow vagrant-proxmox to generate action an only print that out.
+      #
+      # @return [Boolean]
+      attr_accessor :dry
+
+      # LXC network defaults
+      # Specifies network interfaces defaults for the container.
+      #
+      # @return [Hash]
+      attr_accessor :lxc_network_defaults
+
       def initialize
         @endpoint = UNSET_VALUE
         @selected_node = UNSET_VALUE
@@ -315,6 +333,9 @@ module VagrantPlugins
                                       quota: false,
                                       ro: false,
                                       size: 8 }
+        @lxc_network_defaults = UNSET_VALUE
+        @use_network_defaults = false
+        @dry = false
       end
 
       # This is the hook that is called to finalize the object before it is put into use.

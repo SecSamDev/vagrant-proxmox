@@ -61,19 +61,47 @@ module VagrantPlugins
         #   [,rate=<mbps>][,tag=<integer>][,trunks=<vlanid[;vlanid...]>]
         #   [,type=<veth>]
         def add_lxc_network_config(env, params)
-          env[:machine].config.vm.networks.each do |n|
+          config = env[:machine].provider_config
+
+          if config.use_network_defaults &&
+             config.lxc_network_defaults.is_a?(Array)
+            # define shortcuts to networks and network_defaults
+            network_defaults = config.lxc_network_defaults
+            networks = env[:machine].config.vm.networks
+            # iterate through networks defined within vm and
+            # apply defaults if needed
+            networks.each_with_index do |_n, i|
+              # merge settings with defaults
+              next if networks[i].nil? || networks[i][0].nil?
+              next if network_defaults[i].nil? || network_defaults[i][0].nil?
+              next unless networks[i][0].to_sym == network_defaults[i][0].to_sym
+              # merge network
+              networks[i][1] = network_defaults[i][1].merge(networks[i][1])
+              env[:ui].detail "Network merged #{networks[i].inspect}" if config
+                                                                         .dry
+            end
+          end
+
+          # env[:machine].config.vm.networks got replaced by networks
+          networks.each do |n|
             # skip forwarded_port
             if n.first == :forwarded_port
-              env[:ui].info I18n.t('vagrant_proxmox.network_setup_ignored',
-                                   net_config: n)
+              env[:ui].detail I18n.t('vagrant_proxmox.network_setup_ignored',
+                                     net_config: n) if config.dry
               next
             end
 
             # c = network config hash
             c = n.last
-            unless c.include?(:net_id)
-              raise Errors::VMConfigError,
-                    error_msg: "Network #{n} has no :net_id element."
+            %i(net_id bridge).each do |e|
+              unless c.include?(e)
+                raise Errors::VMConfigError,
+                      error_msg: "Network #{n} has no :#{e} element."
+              end
+              if c[e].nil?
+                raise Errors::VMConfigError,
+                      error_msg: "Network #{n} has empty :#{e} element."
+              end
             end
 
             # use interface name detection
@@ -86,12 +114,6 @@ module VagrantPlugins
                                " Set it to 'eth0' or similar."
             end
 
-            unless c.include?(:bridge)
-              raise Errors::VMConfigError,
-                    error_msg: "Network #{n} has no :bridge element."\
-                               ' You need a bridge to attach your interface to.'
-            end
-
             # configuration entry
             cfg = []
             # name=<string>
@@ -99,35 +121,52 @@ module VagrantPlugins
             # [,bridge=<bridge>]
             %w(bridge firewall gw gw6 hwaddr).each do |entry|
               e = entry.to_sym
+              next if c[e].to_s.empty? # ignore element if empty
               cfg.push("#{entry}=#{c[e]}") if c.include?(e)
             end
+            has_ip = false
             # IPv4 - primary ip protocol
             e = :ip
             if c[:type] == 'dhcp' || (c.include?(e) && c[e] == 'dhcp')
               cfg.push('ip=dhcp')
+              has_ip = true
             else
               v = get_ip_cidr4(c)
-              cfg.push("ip=#{v}") if v
+              if v
+                cfg.push("ip=#{v}")
+                has_ip = true
+              end
             end
             # IPv6 - additionally used ip protocol
             e = :ip6
             if c.include?(e) && c[e] == 'dhcp'
               cfg.push('ip6=dhcp')
+              has_ip = true
             else
               v = get_ip_cidr6(c)
-              cfg.push("ip6=#{v}") if v
+              if v
+                cfg.push("ip6=#{v}")
+                has_ip = true
+              end
+            end
+
+            if has_ip == false
+              raise Errors::VMConfigError,
+                    error_msg: "Network #{n} has no :ip or :ip6 element."\
+                               ' You need to set an IP-Address'
             end
             # other options
             %w(mtu rate tag trunks).each do |entry|
               e = entry.to_sym
+              next if c[e].to_s.empty? # ignore element if empty
               cfg.push("#{entry}=#{c[e]}") if c.include?(e)
             end
             # static interface type, similar in all cases
             cfg.push('type=veth')
             # give user feedback about network used setup
             env[:ui].detail I18n.t('vagrant_proxmox.network_setup_info',
-                                 net_id: c[:net_id].to_s,
-                                 net_config: cfg.join(','))
+                                   net_id: c[:net_id].to_s,
+                                   net_config: cfg.join(','))
             params[c[:net_id].to_s] = cfg.join(',')
           end
         end
@@ -161,6 +200,12 @@ module VagrantPlugins
         def get_ip_cidr4(c)
           return false unless c.include?(:ip)
           return false unless c.include?(:ip_cidr)
+          begin
+            return false unless IPAddr.new(c[:ip])
+          rescue IPAddr::Error
+            raise Errors::VMConfigError,
+                  error_msg: "Invalid IP-Address supplied: #{c[:ip]}"
+          end
           "#{c[:ip]}/#{c[:ip_cidr]}"
         end
 
@@ -172,6 +217,12 @@ module VagrantPlugins
         def get_ip_cidr6(c)
           return false unless c.include?(:ip6)
           return false unless c.include?(:ip6_cidr)
+          begin
+            return false unless IPAddr.new(c[:ip6])
+          rescue IPAddr::Error
+            raise Errors::VMConfigError,
+                  error_msg: "Invalid IP-Address supplied: #{c[:ip6]}"
+          end
           "#{c[:ip6]}/#{c[:ip6_cidr]}"
         end
 

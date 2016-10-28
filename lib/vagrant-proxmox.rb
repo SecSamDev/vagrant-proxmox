@@ -1,5 +1,6 @@
 require 'pathname'
 require 'log4r'
+require 'ipaddr'
 require 'active_support/core_ext/object/try'
 
 require 'sanity_checks'

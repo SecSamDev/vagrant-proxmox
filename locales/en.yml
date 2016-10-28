@@ -6,6 +6,11 @@ en:
     destroying_vm: 'Destroying the virtual machine...'
     done: "Done!"
     adjust_forwarded_port_params: 'Trying to adjust forwarded_port params'
+    dry_run: |-
+      Dry run for Action %{action}: %{params}
+
+      You have set 'dry' to 'true' in your Vagrantfile. Please remove it to
+      activate this code.
     network_setup_info: 'Network %{net_id}: %{net_config}'
     network_setup_ignored: |-
       Network config will be ignored, because it isn't supported by proxmox.

@@ -21,6 +21,13 @@ module VagrantPlugins
             params = create_params_openvz(config, env, vm_id) if config.vm_type == :openvz
             params = create_params_lxc(config, env, vm_id) if config.vm_type == :lxc
             params = create_params_qemu(config, env, vm_id) if config.vm_type == :qemu
+            if config.dry == true
+              env[:ui].detail I18n.t('vagrant_proxmox.dry_run',
+                                     action: 'create_vm',
+                                     params: params)
+              raise VagrantPlugins::Proxmox::Errors::VMCreateError,
+                    proxmox_exit_status: 'Dry run enabled'
+            end
             exit_status = connection(env).create_vm node: node, vm_type: config.vm_type, params: params
             exit_status == 'OK' ? exit_status : raise(VagrantPlugins::Proxmox::Errors::ProxmoxTaskFailed, proxmox_exit_status: exit_status)
           rescue StandardError => e
