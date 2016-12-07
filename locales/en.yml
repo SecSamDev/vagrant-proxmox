@@ -6,6 +6,7 @@ en:
     destroying_vm: 'Destroying the virtual machine...'
     done: "Done!"
     adjust_forwarded_port_params: 'Trying to adjust forwarded_port params'
+    read_ssh_info: 'Trying to determine virtual machine IP to connect to.'
     dry_run: |-
       Dry run for Action %{action}: %{params}
 

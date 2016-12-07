@@ -11,9 +11,14 @@ module VagrantPlugins
 				end
 
 				def call env
+					# here, we have to determine how to connect to new vm
+					env[:ui].info I18n.t('vagrant_proxmox.read_ssh_info')
 					env[:machine_ssh_info] = get_machine_ip_address(env).try do |ip_address|
-						{host: ip_address, port: env[:machine].config.ssh.guest_port}
+						ssh_port = env[:machine].config.ssh.guest_port
+						env[:ui].detail "Using #{ip_address}:#{ssh_port} to connect to VM"
+						{host: ip_address, port: ssh_port}
 					end
+					env[:ui].detail "Found machine_ssh_info #{env[:machine_ssh_info]}"
 					env[:machine_ssh_info]
 					next_action env
 				end

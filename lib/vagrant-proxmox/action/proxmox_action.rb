@@ -82,6 +82,8 @@ module VagrantPlugins
             end
           end
 
+          # ensure machine has public_network defined
+          has_public_network = false
           # env[:machine].config.vm.networks got replaced by networks
           networks.each do |n|
             # skip forwarded_port
@@ -90,7 +92,8 @@ module VagrantPlugins
                                      net_config: n) if config.dry
               next
             end
-
+            # help user to find config errors, if no public_network is defined
+            has_public_network = true if n.first == :public_network
             # c = network config hash
             c = n.last
             %i(net_id bridge).each do |e|
@@ -168,6 +171,12 @@ module VagrantPlugins
                                    net_id: c[:net_id].to_s,
                                    net_config: cfg.join(','))
             params[c[:net_id].to_s] = cfg.join(',')
+          end
+          if has_public_network == false
+            raise Errors::VMConfigError,
+                  error_msg: 'Machine has no public_network. vagrant-proxmox'\
+                             ' won\'t be able to connect to it. Please edit '\
+                             ' your config.'
           end
         end
 
