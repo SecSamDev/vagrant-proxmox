@@ -275,16 +275,22 @@ module VagrantPlugins
               end
             end
             # combine volume:size into volume
-            c[:volume] = "#{c[:volume]}:#{c[:size]}"
+            c[:volume] = if c[:size].is_a?(Integer) && c[:size] > 0
+                           "#{c[:volume]}:#{c[:size]}"
+                         else
+                           c[:volume].to_s
+                         end
             # translate booleans
-            %i(acl backup quota ro).each do |k|
-              c[k] = get_rest_boolean(c[k])
+            %i(acl backup quota ro shared).each do |k|
+              c[k] = get_rest_boolean(c[k]) unless c[k] == -1
             end
             # build config string
             cs = []
             %i(volume mp acl backup quota ro).each do |k|
-              cs.push("#{k}=#{c[k]}")
+              cs.push("#{k}=#{c[k]}") unless c[k] == -1
             end
+            # add size if it is zero
+            cs.push("size=#{c[:size]}") if c[:size].zero?
             # put mount point back into params
             e = mp.to_sym
             params[e] = cs.join(',')
