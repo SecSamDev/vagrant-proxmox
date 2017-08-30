@@ -96,6 +96,11 @@ module VagrantPlugins
       # @return [Integer]
       attr_accessor :imgcopy_timeout
 
+      # Add the VM to the specified pool.
+      #
+      # @return [String]
+      attr_accessor :pool
+
       # The qemu virtual machine operating system, e.g. :l26
       #
       # @return [Symbol]
@@ -303,6 +308,7 @@ module VagrantPlugins
         @ssh_timeout = 60
         @ssh_status_check_interval = 5
         @imgcopy_timeout = 120
+        @pool = UNSET_VALUE
         @qemu_os = UNSET_VALUE
         @qemu_cores = 1
         @qemu_sockets = 1
@@ -359,6 +365,7 @@ module VagrantPlugins
         @lxc_ostype = nil if @lxc_ostype == UNSET_VALUE
         @lxc_nameserver = nil if @lxc_nameserver == UNSET_VALUE
         @lxc_tty = 2 if @lxc_tty == UNSET_VALUE
+        @pool = nil if @pool == UNSET_VALUE
       end
 
       def validate(_machine)

@@ -85,7 +85,8 @@ module VagrantPlugins
             cpulimit: config.lxc_cpulimit,
             cpuunits: config.lxc_cpuunits,
             swap: config.lxc_swap,
-            tty: config.lxc_tty
+            tty: config.lxc_tty,
+            pool: config.pool
           }.tap do |params|
             params[:nameserver] = config.lxc_nameserver.to_s\
                                     if config.lxc_nameserver

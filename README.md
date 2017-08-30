@@ -59,12 +59,12 @@ Vagrant.configure('2') do |config|
         proxmox.vm_type = :openvz
         proxmox.vm_memory = 256
     end
-    
+
     config.vm.define :box, primary: true do |box|
         box.vm.box = 'dummy'
         box.vm.network :public_network, ip: '192.168.0.1'
     end
-    
+
 end
 ```
 You can change the `proxmox.vm_type = :openvz` line to `proxmox.vm_type = :lxc` to use lxc instead of openvz
@@ -91,6 +91,8 @@ Vagrant.configure('2') do |config|
         proxmox.qemu_nic_model = 'virtio'
         proxmox.qemu_bridge = 'vmbr0'
         proxmox.vm_memory = 512
+        # place new container / vm into pool 'vagrant'
+        proxmox.pool = 'vagrant'
     end
 
     config.vm.define :box, primary: true do |box|
@@ -139,7 +141,7 @@ Finally run `vagrant up --provider=proxmox` to create and start the new OpenVZ c
 * `qemu_sockets` The number of CPU sockets available to the VM
 * `qemu_nic_model` which model of network interface card to use, default 'e1000'
 * `qemu_bridge` connect automatically to this bridge, default 'vmbr0'
-* `selected_node` If specified, only this specific node is used to create machines 
+* `selected_node` If specified, only this specific node is used to create machines
 * `disable_adjust_forwarded_port` If true, no ssh manipulations will be done.
 
 ## Debug RestClient Communication with Proxmox-Node
