@@ -21,6 +21,13 @@ RSpec::Core::RakeTask.new('spec_coverage') do |_|
 	ENV['RUN_WITH_COVERAGE'] = 'true'
 end
 
+require 'github_changelog_generator/task'
+
+GitHubChangelogGenerator::RakeTask.new :changelog do |config|
+  config.since_tag = 'v0.0.10'
+  config.future_release = 'v0.2.0'
+end
+
 task :release_local do
 	rake_config = YAML::load(File.read("#{ENV['HOME']}/.rake/rake.yml")) rescue {}
 	GeminaboxClient.new(rake_config['geminabox']['url']).push "#{gemspec.name}-#{gemspec.version}.gem", overwrite: true
