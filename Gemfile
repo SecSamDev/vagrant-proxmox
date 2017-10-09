@@ -9,4 +9,5 @@ group :development do
   gem 'vagrant', '1.9.1',
       git: 'https://github.com/mitchellh/vagrant.git',
       ref: 'v1.9.1'
+  gem 'github_changelog_generator'
 end
