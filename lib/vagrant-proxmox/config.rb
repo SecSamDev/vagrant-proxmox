@@ -379,7 +379,7 @@ module VagrantPlugins
         @lxc_ostype = nil if @lxc_ostype == UNSET_VALUE
         @lxc_nameserver = nil if @lxc_nameserver == UNSET_VALUE
         @lxc_tty = 2 if @lxc_tty == UNSET_VALUE
-        @pool = nil if @pool == UNSET_VALUE
+        @pool = 'all' if @pool == UNSET_VALUE
         @description = '' if @description == UNSET_VALUE
       end
 
