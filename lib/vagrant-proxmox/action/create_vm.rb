@@ -45,6 +45,11 @@ module VagrantPlugins
         def create_params_qemu(config, env, vm_id)
           network = "#{config.qemu_nic_model},bridge=#{config.qemu_bridge}"
           network = "#{config.qemu_nic_model}=#{get_machine_macaddress(env)},bridge=#{config.qemu_bridge}" if get_machine_macaddress(env)
+          desc = if config.use_plain_description
+                   config.description
+                 else
+                   "#{config.vm_name_prefix}#{env[:machine].name}:#{config.description}"
+                 end
           {
             vmid: vm_id,
             name: env[:machine].config.vm.hostname || env[:machine].name.to_s,
@@ -55,24 +60,34 @@ module VagrantPlugins
             cores: config.qemu_cores,
             memory: config.vm_memory,
             net0: network,
-            description: "#{config.vm_name_prefix}#{env[:machine].name}"
+            description: desc
           }
         end
 
         def create_params_openvz(config, env, vm_id)
+          desc = if config.use_plain_description
+                   config.description
+                 else
+                   "#{config.vm_name_prefix}#{env[:machine].name}:#{config.description}"
+                 end
           {
             vmid: vm_id,
             ostemplate: config.openvz_os_template,
             hostname: env[:machine].config.vm.hostname || env[:machine].name.to_s,
             password: 'vagrant',
             memory: config.vm_memory,
-            description: "#{config.vm_name_prefix}#{env[:machine].name}"
+            description: desc
           }.tap do |params|
             params[:ip_address] = get_machine_ip_address(env) if get_machine_ip_address(env)
           end
         end
 
         def create_params_lxc(config, env, vm_id)
+          desc = if config.use_plain_description
+                   config.description
+                 else
+                   "#{config.vm_name_prefix}#{env[:machine].name}:#{config.description}"
+                 end
           {
             vmid: vm_id,
             ostemplate: config.openvz_os_template,
@@ -80,7 +95,7 @@ module VagrantPlugins
             password: 'vagrant',
             rootfs: "#{config.vm_storage}:#{config.vm_disk_size}",
             memory: config.vm_memory,
-            description: "#{config.vm_name_prefix}#{env[:machine].name}",
+            description: desc,
             cmode: config.lxc_cmode.to_s,
             cpulimit: config.lxc_cpulimit,
             cpuunits: config.lxc_cpuunits,

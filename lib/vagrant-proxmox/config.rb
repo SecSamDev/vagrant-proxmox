@@ -289,6 +289,18 @@ module VagrantPlugins
       # @return [Hash]
       attr_accessor :lxc_network_defaults
 
+      # VM/CT description
+      # Container description. Only used on the configuration web interface.
+      #
+      # @return [String]
+      attr_accessor :description
+
+      # Use plain description
+      # disable vagrant_default description prefix
+      #
+      # @return [Boolean]
+      attr_accessor :use_plain_description
+
       def initialize
         @endpoint = UNSET_VALUE
         @selected_node = UNSET_VALUE
@@ -342,6 +354,8 @@ module VagrantPlugins
         @lxc_network_defaults = UNSET_VALUE
         @use_network_defaults = false
         @dry = false
+        @description = UNSET_VALUE
+        @use_plain_description = false
       end
 
       # This is the hook that is called to finalize the object before it is put into use.
@@ -366,6 +380,7 @@ module VagrantPlugins
         @lxc_nameserver = nil if @lxc_nameserver == UNSET_VALUE
         @lxc_tty = 2 if @lxc_tty == UNSET_VALUE
         @pool = nil if @pool == UNSET_VALUE
+        @description = '' if @description == UNSET_VALUE
       end
 
       def validate(_machine)
