@@ -103,6 +103,7 @@ module VagrantPlugins
             tty: config.lxc_tty,
             pool: config.pool
           }.tap do |params|
+            params['ssh-public-keys'] = config.lxc_ssh_public_keys
             params[:nameserver] = config.lxc_nameserver.to_s\
                                     if config.lxc_nameserver
             params[:onboot] = get_rest_boolean(config.lxc_onboot)
