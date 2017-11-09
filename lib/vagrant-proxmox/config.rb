@@ -402,7 +402,7 @@ module VagrantPlugins
         end
         if @vm_type == :lxc
           errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_cmode') unless \
-            %w(tty shell console).include?(@lxc_cmode)
+            %w[tty shell console].include?(@lxc_cmode)
           errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_tty') unless \
             @lxc_tty.is_a?(Integer)
         end
