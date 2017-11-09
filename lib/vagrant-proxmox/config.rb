@@ -301,6 +301,12 @@ module VagrantPlugins
       # @return [Boolean]
       attr_accessor :use_plain_description
 
+      # LXC ssh-public-keys
+      # Setup public SSH keys (one key per line, OpenSSH format).
+      #
+      # @return [String]
+      attr_accessor :lxc_ssh_public_keys
+
       def initialize
         @endpoint = UNSET_VALUE
         @selected_node = UNSET_VALUE
@@ -356,6 +362,7 @@ module VagrantPlugins
         @dry = false
         @description = UNSET_VALUE
         @use_plain_description = false
+        @lxc_ssh_public_keys = UNSET_VALUE
       end
 
       # This is the hook that is called to finalize the object before it is put into use.
@@ -381,6 +388,7 @@ module VagrantPlugins
         @lxc_tty = 2 if @lxc_tty == UNSET_VALUE
         @pool = 'all' if @pool == UNSET_VALUE
         @description = '' if @description == UNSET_VALUE
+        @lxc_ssh_public_keys = '' if @lxc_ssh_public_keys == UNSET_VALUE
       end
 
       def validate(_machine)
@@ -402,7 +410,7 @@ module VagrantPlugins
         end
         if @vm_type == :lxc
           errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_cmode') unless \
-            %w(tty shell console).include?(@lxc_cmode)
+            %w[tty shell console].include?(@lxc_cmode)
           errors << I18n.t('vagrant_proxmox.errors.lxc_no_valid_tty') unless \
             @lxc_tty.is_a?(Integer)
         end
