@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'simplecov', '~> 0.9.0'
   spec.add_development_dependency 'simplecov-rcov', '~> 0.2.3'
-  spec.add_development_dependency 'geminabox', '~> 0.11.1'
+  spec.add_development_dependency 'geminabox', '~> 1.1.1'
   spec.add_development_dependency 'guard-rspec', '4.2.10'
   spec.add_development_dependency 'libnotify', '~> 0.8.3'
   spec.add_development_dependency 'timecop', '~>0.7.1'
