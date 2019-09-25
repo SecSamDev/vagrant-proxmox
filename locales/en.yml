@@ -4,6 +4,7 @@ en:
     already_stopped: "The virtual machine is already stopped"
     creating_vm: 'Creating the virtual machine...'
     destroying_vm: 'Destroying the virtual machine...'
+    cloning_vm: 'Cloning virtual machine...'
     done: "Done!"
     adjust_forwarded_port_params: 'Trying to adjust forwarded_port params'
     read_ssh_info: 'Trying to determine virtual machine IP to connect to.'
@@ -57,6 +58,10 @@ en:
         Unable to create the virtual machine!
 
         Cause: %{proxmox_exit_status}
+      vm_clone_error: |-
+        Unable to clone the virtual machine!
+
+        Cause: %{proxmox_exit_status}
       vm_destroy_error: |-
         Unable to destroy the virtual machine!
 
@@ -84,6 +89,7 @@ en:
       no_qemu_iso_or_qemu_iso_file_specified_for_vm_type_qemu: "No qemu_iso or qemu_iso_file specified for vm_type=:qemu"
       no_qemu_os_specified_for_vm_type_qemu: "No qemu_os specified for vm_type=:qemu"
       no_qemu_disk_size_specified_for_vm_type_qemu: "No qemu_disk_size specified for vm_type=:qemu"
+      no_template_available: No template available
       invalid_node_error: 'Invalid node specified: %{node}'
       vm_configure_error: |-
         Invalid box configuration

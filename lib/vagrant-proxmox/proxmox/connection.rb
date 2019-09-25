@@ -195,7 +195,7 @@ module VagrantPlugins
       private
 
       def get(path)
-        response = RestClient.get "#{api_url}#{path}", cookies: { PVEAuthCookie: ticket }
+        response = RestClient.get "#{api_url}#{path}", {:cookies => { PVEAuthCookie: ticket }, :verify_ssl => OpenSSL::SSL::VERIFY_NONE}
         JSON.parse response.to_s, symbolize_names: true
       rescue RestClient::NotImplemented
         raise ApiError::NotImplemented
@@ -210,7 +210,7 @@ module VagrantPlugins
       private
 
       def delete(path, _params = {})
-        response = RestClient.delete "#{api_url}#{path}", headers
+        response = RestClient.delete "#{api_url}#{path}", {:headers => headers, :verify_ssl => OpenSSL::SSL::VERIFY_NONE}
         JSON.parse response.to_s, symbolize_names: true
       rescue RestClient::Unauthorized
         raise ApiError::UnauthorizedError
@@ -225,7 +225,7 @@ module VagrantPlugins
       private
 
       def post(path, params = {})
-        response = RestClient.post "#{api_url}#{path}", params, headers
+        response = RestClient.post "#{api_url}#{path}", params, {:headers => headers, :verify_ssl => OpenSSL::SSL::VERIFY_NONE}
         JSON.parse response.to_s, symbolize_names: true
       rescue RestClient::Unauthorized
         raise ApiError::UnauthorizedError
