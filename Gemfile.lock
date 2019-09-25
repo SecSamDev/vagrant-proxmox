@@ -61,7 +61,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.0.0)
       faraday (~> 0.8)
-    ffi (1.9.14)
+    ffi (1.11.1)
     formatador (0.2.5)
     geminabox (0.11.1)
       builder
