@@ -150,7 +150,7 @@ GEM
       rack
     rainbow (2.2.2)
       rake
-    rake (10.5.0)
+    rake (13.0.1)
     rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
@@ -235,7 +235,7 @@ DEPENDENCIES
   github_changelog_generator
   guard-rspec (= 4.2.10)
   libnotify (~> 0.8.3)
-  rake (= 10.5.0)
+  rake (= 13.0.1)
   rspec (~> 3.0)
   simplecov (~> 0.9.0)
   simplecov-rcov (~> 0.2.3)
